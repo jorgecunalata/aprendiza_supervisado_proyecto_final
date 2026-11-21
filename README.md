@@ -118,21 +118,15 @@ Se recomienda la **Regresión Logística con TF‑IDF (1‑2 gramas)**: es signi
 ## 4. Estructura del proyecto
 
 ```
-proyecto_cfpb/
-├── Proyecto_Final_Quejas_CFPB.ipynb   # notebook entregable
+aprendiza_supervisado_proyecto_final/
+├── Proyecto_Final_Quejas_CFPB.ipynb   # notebook entregable (con las salidas de la ejecución)
 ├── README.md                          # este archivo
-├── build_nb.py                        # script que genera el notebook (nbformat)
-├── requirements.txt                   # dependencias
-├── tests/
-│   └── make_fake.py                   # genera un ZIP sintético para pruebas rápidas
 └── dataset/                           # se crea en la primera corrida (no se versiona)
     ├── complaints.csv.zip             # archivo de la CFPB (~1.17 GB)
     ├── cfpb_sample_n15000_k0.05.parquet
     ├── cfpb_monthly.parquet
     └── cfpb_lemmas_n15000_k0.05.parquet
 ```
-
-> `build_nb.py` regenera el notebook **sin salidas**. Si se ejecuta `python build_nb.py`, se pierden los resultados guardados en el `.ipynb` y hay que volver a correrlo.
 
 ---
 
@@ -150,7 +144,7 @@ proyecto_cfpb/
 
 ### Opción A — Google Colab en el navegador (recomendada)
 
-1. Abrir <https://colab.research.google.com> y subir `Proyecto_Final_Quejas_CFPB.ipynb` (*File → Upload notebook*).
+1. Abrir el notebook en Colab directamente desde este repositorio: <https://colab.research.google.com/github/jorgecunalata/aprendiza_supervisado_proyecto_final/blob/main/Proyecto_Final_Quejas_CFPB.ipynb> (o descargar `Proyecto_Final_Quejas_CFPB.ipynb` y subirlo con *File → Upload notebook*).
 2. Ejecutar *Runtime → Run all*.
 3. En la celda de parámetros, Colab pide **autorizar el acceso a Google Drive**: la carpeta `dataset` se crea en `MyDrive/proyecto_cfpb/dataset` y se conserva entre sesiones. Si no se autoriza, el notebook continúa con una carpeta local `/content/dataset` (se borra al cerrar el entorno).
 
@@ -167,14 +161,16 @@ Para montar Drive, la cuenta de Google del Drive debe ser **la misma** con la qu
 ### Opción C — Local (VS Code / Jupyter)
 
 ```bash
-cd proyecto_cfpb
+git clone https://github.com/jorgecunalata/aprendiza_supervisado_proyecto_final.git
+cd aprendiza_supervisado_proyecto_final
 python3.12 -m venv .venv            # o: uv venv --python 3.12 .venv
 source .venv/bin/activate
-pip install -r requirements.txt
+pip install scikit-learn pandas numpy scipy matplotlib seaborn statsmodels \
+            spacy wordcloud optuna pyarrow joblib ipykernel
 python -m spacy download en_core_web_sm
 ```
 
-En VS Code, seleccionar el kernel `proyecto_cfpb/.venv` y ejecutar todas las celdas. La carpeta `dataset/` se crea automáticamente junto al notebook. Se necesitan ~1.5 GB libres en disco.
+En VS Code, seleccionar el kernel `.venv` de la carpeta del proyecto y ejecutar todas las celdas. La carpeta `dataset/` se crea automáticamente junto al notebook. Se necesitan ~1.5 GB libres en disco.
 
 ### Tiempos aproximados (ejecución completa)
 
@@ -228,18 +224,6 @@ En Colab se usan las versiones preinstaladas del entorno. Diferencias de versió
 
 Para la entrega se usan los valores por defecto.
 
-### Prueba rápida con datos sintéticos
-
-Verifica que el notebook corre de principio a fin sin descargar el dataset real (los resultados no son válidos para el informe):
-
-```bash
-cd proyecto_cfpb/tests && python make_fake.py && cd ..
-FAST_MODE=1 N_SAMPLE=4000 CFPB_KEEP_FRAC=1 OPTUNA_TRIALS=3 \
-DATASET_DIR=/tmp/cfpb_ds CFPB_ZIP="$PWD/tests/complaints.csv.zip" \
-jupyter nbconvert --to notebook --execute Proyecto_Final_Quejas_CFPB.ipynb \
-  --output-dir /tmp/cfpb_out --ExecutePreprocessor.timeout=1200
-```
-
 ---
 
 ## 8. Problemas conocidos
@@ -255,7 +239,7 @@ jupyter nbconvert --to notebook --execute Proyecto_Final_Quejas_CFPB.ipynb \
 
 ## 9. Uso de IA generativa
 
-Siguiendo la indicación del curso, el código se desarrolló con apoyo de un asistente de IA generativa. Los *prompts* utilizados, organizados por sección, están en el **Anexo** al final del notebook.
+Siguiendo la indicación del curso, el código se desarrolló con apoyo de un asistente de IA generativa. El **Anexo** al final del notebook documenta el proceso de desarrollo: las decisiones y pruebas realizadas, los *prompts* utilizados por sección y las iteraciones de corrección (problema encontrado y arreglo aplicado).
 
 ## 10. Referencias
 
